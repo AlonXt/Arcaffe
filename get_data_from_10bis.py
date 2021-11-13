@@ -5,7 +5,7 @@ def get_html_content(url:str) -> str:
     if html_response.status_code != 200:
         return "Bad html_response"
 
-    content = json.loads(html_response.content, encoding='utf-8')
+    content = json.loads(html_response.content)
     return content
 
 def create_product(dish_dict:dict):
