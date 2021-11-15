@@ -1,7 +1,6 @@
 from get_data_from_10bis import create_menu_json_from_web
 import uvicorn
 
-
 #  uvicorn api:app --reload
 
 def run():

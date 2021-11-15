@@ -24,13 +24,12 @@ class Order(BaseModel):
             if order_products:
                 for product_id in order_products:
                     if menu_products.get(product_id):
-                        try:
-                            total_price += menu_products.get(product_id)['price']  # fix price name into global var?
-                        except Exception as e:
-                            # Raise error instead of returning string while saying you return int.
-                            raise f"{e} Product ID: {product_id} doesn't exist!"
+                        total_price += menu_products.get(product_id)['price']  # fix price name into global var?
+                    else:
+                        raise ValueError(f"'{product_id}' Product ID doesn't exist")
 
         return total_price
+
 
     def __repr__(self) -> str:
         if self.check_if_empty():
@@ -38,13 +37,17 @@ class Order(BaseModel):
 
         return f'Pizzas ids: {self.pizzas}, Desserts ids: {self.desserts}, Drinks ids: {self.drinks}'
 
+
 # Tests
-
-# a = Order(drinks=[], desserts=[], pizzas=["2055830"])
-# print(a)
-# print(a.__repr__())
-# print(a.calc_price())
-
-# b = Order()
-# print(b.__repr__())
-# print(b.calc_price())
+# if __name__ == "__main__":
+#     a = Order(drinks=[], desserts=[], pizzas=["2055830"])
+#     print(a.__repr__())
+#     print(a.calc_price())
+#
+#     b = Order()
+#     print(b.__repr__())
+#     print(b.calc_price())
+#
+#     c = Order(drinks=[], desserts=["11"], pizzas=[])
+#     print(c.__repr__())
+#     print(c.calc_price())

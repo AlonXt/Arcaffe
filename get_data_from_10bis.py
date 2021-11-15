@@ -14,6 +14,14 @@ def create_product(dish_dict: dict):
     return {"name": dish_dict['dishName'], "price": int(dish_dict['dishPrice']), "desc": dish_dict['dishDescription']}
 
 
+def find_wanted_dish_list_index(menu_content: json, dish_name: str) -> int:
+    """ The func gets the dish name in lower case an gets the index of the dish from the original menu json"""
+    categories_list = menu_content['categoriesList']
+    for index, cat_dict in enumerate(categories_list):
+        if dish_name in cat_dict['categoryName'].lower():
+            return index
+
+
 def create_menu_dict(index: int, menu_content: json) -> dict:
     product_menu_list = menu_content['categoriesList'][index]['dishList']
     product_menu = {item['dishId']: create_product(item) for item in product_menu_list}
@@ -32,7 +40,17 @@ def create_menu_json_from_web():
         menu_content = get_html_content(menu_api)
     except Exception as e:
         print(f"{e} Error happened while getting the Arcaffe menu from the web")
+
     # Create the wanted menus for the task
-    final_menu = {'pizzas_menu': create_menu_dict(3, menu_content), 'desserts_menu': create_menu_dict(4, menu_content),
-                  'drinks_menu': create_menu_dict(5, menu_content)}
+    pizza_index = find_wanted_dish_list_index(menu_content, 'pizza')
+    drink_index = find_wanted_dish_list_index(menu_content, 'drink')
+    dessert_index = find_wanted_dish_list_index(menu_content, 'dessert')
+
+    # create the final menu for the task
+    final_menu = {'pizzas_menu': create_menu_dict(pizza_index, menu_content), 'desserts_menu': create_menu_dict(dessert_index, menu_content),
+                  'drinks_menu': create_menu_dict(drink_index, menu_content)}
     create_json(final_menu)
+
+
+if __name__ == "__main__":
+    create_menu_json_from_web()
