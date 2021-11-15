@@ -16,10 +16,11 @@ class Order(BaseModel):
     def calc_price(self) -> int:
         total_price: int = 0
         menu = menu_provider.get_menu()
-        products_list = [(self.drinks, menu['drinks_menu']), (self.desserts, menu['desserts_menu']),
+        products_zipped_categories = [(self.drinks, menu['drinks_menu']), (self.desserts, menu['desserts_menu']),
                          (self.pizzas, menu['pizzas_menu'])]
 
-        for _tuple in products_list:
+        # Iterate over the products_zipped_categories and extract (by ID) and aggregate the price of each ordered product (if exists in actual menu) from the actual menu
+        for _tuple in products_zipped_categories:
             order_products, menu_products = _tuple[0], _tuple[1]
             if order_products:
                 for product_id in order_products:
@@ -29,7 +30,6 @@ class Order(BaseModel):
                         raise ValueError(f"'{product_id}' Product ID doesn't exist")
 
         return total_price
-
 
     def __repr__(self) -> str:
         if self.check_if_empty():
@@ -43,11 +43,11 @@ class Order(BaseModel):
 #     a = Order(drinks=[], desserts=[], pizzas=["2055830"])
 #     print(a.__repr__())
 #     print(a.calc_price())
-#
-#     b = Order()
-#     print(b.__repr__())
-#     print(b.calc_price())
-#
-#     c = Order(drinks=[], desserts=["11"], pizzas=[])
-#     print(c.__repr__())
-#     print(c.calc_price())
+
+    # b = Order()
+    # print(b.__repr__())
+    # print(b.calc_price())
+    #
+    # c = Order(drinks=[], desserts=["11"], pizzas=[])
+    # print(c.__repr__())
+    # print(c.calc_price())
