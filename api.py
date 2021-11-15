@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Path, HTTPException
-from order import Order
+from order_class import Order
 import menu_provider
 
 app = FastAPI()
