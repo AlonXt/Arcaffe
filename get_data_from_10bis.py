@@ -1,7 +1,5 @@
 import requests, json
 
-from menu_provider import MENU_JSON, PRICE_KEY
-
 DISH_CATEGORIES = ["pizza", "drink", "dessert"]
 
 
@@ -49,7 +47,7 @@ def create_menu_json_from_web():
     final_menu = {}
     for dish in DISH_CATEGORIES:
         dish_index = find_wanted_dish_list_index(menu_content, dish)
-        final_menu = {**final_menu, **create_menu_dict(dish_index, menu_content)}
+        final_menu[f"{dish}s_menu"] = create_menu_dict(dish_index, menu_content)
 
     create_json(final_menu)
 
