@@ -1,5 +1,7 @@
 import requests, json
 
+DISH_CATEGORIES = ["pizza", "drink", "dessert"]
+
 
 def get_html_content(url: str) -> str:
     html_response = requests.get(url)
@@ -42,13 +44,11 @@ def create_menu_json_from_web():
         print(f"{e} Error happened while getting the Arcaffe menu from the web")
 
     # Create the wanted menus for the task
-    pizza_index = find_wanted_dish_list_index(menu_content, 'pizza')
-    drink_index = find_wanted_dish_list_index(menu_content, 'drink')
-    dessert_index = find_wanted_dish_list_index(menu_content, 'dessert')
+    final_menu = {}
+    for dish in DISH_CATEGORIES:
+        dish_index = find_wanted_dish_list_index(menu_content, dish)
+        final_menu[f"{dish}s_menu"] = create_menu_dict(dish_index, menu_content)
 
-    # create the final menu for the task
-    final_menu = {'pizzas_menu': create_menu_dict(pizza_index, menu_content), 'desserts_menu': create_menu_dict(dessert_index, menu_content),
-                  'drinks_menu': create_menu_dict(drink_index, menu_content)}
     create_json(final_menu)
 
 
