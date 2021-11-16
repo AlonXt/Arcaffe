@@ -1,5 +1,7 @@
 import requests, json
 
+from menu_provider import MENU_JSON, PRICE_KEY
+
 DISH_CATEGORIES = ["pizza", "drink", "dessert"]
 
 
