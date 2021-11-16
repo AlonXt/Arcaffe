@@ -1,5 +1,7 @@
 import requests, json
 
+from menu_provider import MENU_JSON, PRICE_KEY
+
 DISH_CATEGORIES = ["pizza", "drink", "dessert"]
 
 
@@ -13,7 +15,7 @@ def get_html_content(url: str) -> str:
 
 
 def create_product(dish_dict: dict):
-    return {"name": dish_dict['dishName'], "price": int(dish_dict['dishPrice']), "desc": dish_dict['dishDescription']}
+    return {"name": dish_dict['dishName'], PRICE_KEY: int(dish_dict['dishPrice']), "desc": dish_dict['dishDescription']}
 
 
 def find_wanted_dish_list_index(menu_content: json, dish_name: str) -> int:
@@ -31,7 +33,7 @@ def create_menu_dict(index: int, menu_content: json) -> dict:
 
 
 def create_json(content: dict):
-    with open("menu.json", mode='w') as menu_file:
+    with open(MENU_JSON, mode='w') as menu_file:
         json.dump(content, menu_file, ensure_ascii=False)
 
 

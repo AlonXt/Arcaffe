@@ -1,5 +1,6 @@
 import json
 
+MENU_JSON = "menu.json"
 PRICE_KEY = "price"
 
 
@@ -15,6 +16,6 @@ class Menu:
 
 
 def get_menu() -> Menu:
-    with open("menu.json") as menu_file:
+    with open(MENU_JSON) as menu_file:
         data = json.load(menu_file)
     return Menu(data)
