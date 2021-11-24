@@ -13,14 +13,18 @@ def _id_to_dish(dish_menu: dict) -> dict:
 
 
 class Menu:
+    menu: dict
+    flat_menu: dict
+
     def __init__(self, menu_dict: dict) -> None:
-        self._id_to_dish = _id_to_dish(menu_dict)
+        self.menu = menu_dict
+        self.flat_menu = _id_to_dish(menu_dict)
 
     def get_dish_price(self, dish_id: str) -> int:
-        if dish_id not in self._id_to_dish:
-            raise KeyError(f"Dish id {dish_id} not found in menu (possible ids: {tuple(self._id_to_dish.keys())}")
+        if dish_id not in self.flat_menu:
+            raise KeyError(f"Dish id {dish_id} not found in menu (possible ids: {tuple(self.flat_menu.keys())}")
 
-        return self._id_to_dish[dish_id][PRICE_KEY]
+        return self.flat_menu[dish_id][PRICE_KEY]
 
 
 def get_menu() -> Menu:

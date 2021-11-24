@@ -12,12 +12,12 @@ def home():
 
 @app.get("/menu")
 def data():
-    return menu_provider.get_menu()
+    return menu_provider.get_menu().menu
 
 
 @app.get("/drinks")
 def get_drinks():
-    menu = menu_provider.get_menu()
+    menu = menu_provider.get_menu().menu
     if menu['drinks_menu']:
         return menu['drinks_menu']
     raise HTTPException(status_code=404, detail="No drinks")
@@ -25,7 +25,7 @@ def get_drinks():
 
 @app.get("/drink/{item_id}")
 def get_item(item_id: str = Path(None, description="The ID of the drink you would like to view")):
-    menu = menu_provider.get_menu()
+    menu = menu_provider.get_menu().menu
     if menu['drinks_menu'].get(item_id):
         return menu['drinks_menu'][item_id]
     raise HTTPException(status_code=404, detail="Drink ID not found")
@@ -33,7 +33,7 @@ def get_item(item_id: str = Path(None, description="The ID of the drink you woul
 
 @app.get("/pizzas")
 def get_pizzas():
-    menu = menu_provider.get_menu()
+    menu = menu_provider.get_menu().menu
     if menu['pizzas_menu']:
         return menu['pizzas_menu']
     raise HTTPException(status_code=404, detail="No pizzas")
@@ -41,7 +41,7 @@ def get_pizzas():
 
 @app.get("/pizza/{item_id}")
 def get_item(item_id: str = Path(None, description="The ID of the pizza you would like to view")):
-    menu = menu_provider.get_menu()
+    menu = menu_provider.get_menu().menu
     if menu['pizzas_menu'].get(item_id):
         return menu['pizzas_menu'][item_id]
     raise HTTPException(status_code=404, detail="pizza ID not found")
@@ -49,7 +49,7 @@ def get_item(item_id: str = Path(None, description="The ID of the pizza you woul
 
 @app.get("/desserts")
 def get_desserts():
-    menu = menu_provider.get_menu()
+    menu = menu_provider.get_menu().menu
     if menu['desserts_menu']:
         return menu['desserts_menu']
     raise HTTPException(status_code=404, detail="No desserts")
@@ -57,7 +57,7 @@ def get_desserts():
 
 @app.get("/dessert/{item_id}")
 def get_item(item_id: str = Path(None, description="The ID of the dessert you would like to view")):
-    menu = menu_provider.get_menu()
+    menu = menu_provider.get_menu().menu
     if menu['desserts_menu'].get(item_id):
         return menu['desserts_menu'][item_id]
     raise HTTPException(status_code=404, detail="dessert ID not found")
@@ -67,5 +67,8 @@ def get_item(item_id: str = Path(None, description="The ID of the dessert you wo
 def create_order(order: Order):
     if order.check_if_empty():
         raise HTTPException(status_code=400, detail="Bad Request: Order is empty")
-    order_total_price = order.calc_price()
-    return {"Order_price": order_total_price}
+    try:
+        order_total_price = order.calc_price()
+        return {"Order_price": order_total_price}
+    except Exception as ex:
+        raise HTTPException(status_code=400, detail=str(ex))
