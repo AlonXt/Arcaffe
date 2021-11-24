@@ -1,10 +1,10 @@
-from get_data_from_10bis import create_menu_json_from_web
 import uvicorn
+from scrape import scrape
+
 
 #  uvicorn api:app --reload
-
 def run():
-    create_menu_json_from_web()
+    scrape()
     uvicorn.run("api:app", host="127.0.0.1", port=8000, log_level="info")
 
 
