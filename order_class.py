@@ -24,14 +24,16 @@ class Order(BaseModel):
 
 # Tests
 # if __name__ == "__main__":
-    # a = Order(dishes=["2055830","2055830"])
-    # print(a.__repr__())
-    # print(a.calc_price())
-
-    # b = Order()
-    # print(b.__repr__())
-    # print(b.calc_price())
-
-    # c = Order(dishes=["11"])
-    # print(c.__repr__())
-    # print(c.calc_price())
+#     a = Order(dishes=["2055830", "2055830"])
+#     print(a)
+#     print(a.dishes)
+#     print(a.__repr__())
+#     print(a.calc_price())
+#
+#     b = Order()
+#     print(b.__repr__())
+#     print(b.calc_price())
+#
+#     c = Order(dishes=["11"])
+#     print(c.__repr__())
+#     print(c.calc_price())

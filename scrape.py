@@ -1,4 +1,7 @@
 import json
+import traceback
+from typing import List, Dict
+
 import requests
 
 from menu_provider import MENU_JSON, PRICE_KEY
@@ -25,8 +28,8 @@ def _create_menu(index: int, menu_content: json) -> dict:
     return product_menu
 
 
-def _create_json(content: dict):
-    with open(MENU_JSON, mode='w') as menu_file:
+def _create_json(content: dict, json_name: str = MENU_JSON):
+    with open(json_name, mode='w') as menu_file:
         json.dump(content, menu_file, ensure_ascii=False)
 
 
@@ -45,17 +48,36 @@ def _create_final_menu(content):
     return menu
 
 
+def _create_db_menu(content):
+    menu_categories: List[Dict] = content['categoriesList']
+    dishes = []
+    for cat in menu_categories:
+        if cat['categoryID'] == 0:
+            continue
+        for dish in cat['dishList']:
+            dishes.append(
+                {"dish_id": dish['dishId'], "dish_name": dish['dishName'], "description": dish['dishDescription'],
+                 "category": cat['categoryName'], "price": dish['dishPrice']})
+    return dishes
+    # return [{"dish_id": dish.dishId, "dish_name": dish.dishName, "description": dish.dishDescription,
+    #          "category": cat.categoryName, "price": dish.dishPrice} for dish in cat['dishList'] for cat in
+    #         menu_categories]
+
+
 def _scrape_unsafe(url):
     print(f'Scraping {url}')
     content = _get_html_content(url)
+    _create_json(content, json_name="original_menu.json")
+    db_menu = _create_db_menu(content)
     menu = _create_final_menu(content)
     _create_json(menu)
+    return db_menu
 
 
 def scrape(url=MENU_URL):
     try:
-        _scrape_unsafe(url)
-        return 0
+        db_menu = _scrape_unsafe(url)
+        return db_menu
     except:
         traceback.print_exc()
         return 1
