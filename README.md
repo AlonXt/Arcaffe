@@ -1,6 +1,6 @@
 # Arcaffe
 
-###There are two options for running this project:
+### There are two options for running this project:
 * With or without Postgress database
 
 ### To run it with the DB please follow the next steps:
