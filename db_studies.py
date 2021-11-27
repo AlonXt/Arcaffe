@@ -1,5 +1,5 @@
 from sqlalchemy import *
-from database import CONNECTION
+from run import CONNECTION
 
 # ---- STUDIES ----
 

@@ -1,9 +1,11 @@
 from fastapi import FastAPI, Path, HTTPException
 from sqlalchemy import *
 from order_class import Order
-from database import CONNECTION, DISHES_TABLE
+from dishes_repo import DishesRepository, create_db_engine
+from run import CONNECTION
 
-ENGINE = create_engine(CONNECTION)
+ENGINE = create_db_engine(CONNECTION)
+DISH_REPO = DishesRepository(ENGINE)
 db_app = FastAPI()
 
 
@@ -14,18 +16,16 @@ def home():
 
 @db_app.get("/menu")
 def data():
-    with ENGINE.connect() as conn:
-        res = conn.execute(text(f"select * from {DISHES_TABLE}"))
-        return res.fetchall()
+    try:
+        return DISH_REPO.get_menu()
+    except:
+        raise HTTPException(status_code=404, detail="Menu not found")
 
 
 @db_app.get("/drinks")
 def get_drinks():
     try:
-        with ENGINE.connect() as conn:
-            stmt = text(f"select * from {DISHES_TABLE} where category=:category")
-            res = conn.execute(stmt, {"category": "Drinks"})
-            return res.fetchall()
+        return DISH_REPO.get_category("Drinks")
     except:
         raise HTTPException(status_code=404, detail="No drinks")
 
@@ -33,10 +33,7 @@ def get_drinks():
 @db_app.get("/drink/{item_id}")
 def get_item(item_id: str = Path(None, description="The ID of the drink you would like to view")):
     try:
-        with ENGINE.connect() as conn:
-            stmt = text(f"select * from {DISHES_TABLE} where dish_id=:dish_id and category=:category")
-            res = conn.execute(stmt, {"dish_id": item_id, "category": "Drinks"})
-            return res.fetchall()
+        return DISH_REPO.get_category_item("Desserts", item_id)
     except:
         raise HTTPException(status_code=404, detail="Drink ID not found")
 
@@ -44,10 +41,7 @@ def get_item(item_id: str = Path(None, description="The ID of the drink you woul
 @db_app.get("/pizzas")
 def get_pizzas():
     try:
-        with ENGINE.connect() as conn:
-            stmt = text(f"select * from {DISHES_TABLE} where category=:category")
-            res = conn.execute(stmt, {"category": "Pizzas"})
-            return res.fetchall()
+        return DISH_REPO.get_category("Pizzas")
     except:
         raise HTTPException(status_code=404, detail="No Pizzas")
 
@@ -55,10 +49,7 @@ def get_pizzas():
 @db_app.get("/pizza/{item_id}")
 def get_item(item_id: str = Path(None, description="The ID of the pizza you would like to view")):
     try:
-        with ENGINE.connect() as conn:
-            stmt = text(f"select * from {DISHES_TABLE} where dish_id=:dish_id and category=:category")
-            res = conn.execute(stmt, {"dish_id": item_id, "category": "Pizzas"})
-            return res.fetchall()
+        return DISH_REPO.get_category_item("Pizzas", item_id)
     except:
         raise HTTPException(status_code=404, detail="Pizza ID not found")
 
@@ -66,10 +57,7 @@ def get_item(item_id: str = Path(None, description="The ID of the pizza you woul
 @db_app.get("/desserts")
 def get_desserts():
     try:
-        with ENGINE.connect() as conn:
-            stmt = text(f"select * from {DISHES_TABLE} where category=:category")
-            res = conn.execute(stmt, {"category": "Desserts"})
-            return res.fetchall()
+        return DISH_REPO.get_category("Desserts")
     except:
         raise HTTPException(status_code=404, detail="No Desserts")
 
@@ -77,10 +65,7 @@ def get_desserts():
 @db_app.get("/dessert/{item_id}")
 def get_item(item_id: str = Path(None, description="The ID of the dessert you would like to view")):
     try:
-        with ENGINE.connect() as conn:
-            stmt = text(f"select * from {DISHES_TABLE} where dish_id=:dish_id and category=:category")
-            res = conn.execute(stmt, {"dish_id": item_id, "category": "Desserts"})
-            return res.fetchall()
+        return DISH_REPO.get_category_item("Desserts", item_id)
     except:
         raise HTTPException(status_code=404, detail="Dessert ID not found")
 
@@ -90,9 +75,6 @@ def create_order(order: Order):
     if order.check_if_empty():
         raise HTTPException(status_code=400, detail="Bad Request: Order is empty")
     try:
-        with ENGINE.connect() as conn:
-            stmt = text(f"select sum(price) from {DISHES_TABLE} where dish_id IN :order_ids")
-            res = conn.execute(stmt, {"order_ids": tuple(order.dishes)})
-            return res.fetchall()
+        return DISH_REPO.calc_order_price(order)
     except Exception as ex:
         raise HTTPException(status_code=400, detail=str(ex))
